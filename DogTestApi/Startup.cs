@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using DogTestApi.Misc.Binders;
 using DogTestApi.Models;
 using Microsoft.AspNetCore.Builder;
@@ -28,11 +29,21 @@ namespace DogTestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+            services.AddMemoryCache();
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            services.AddInMemoryRateLimiting();
+            services.AddMvc();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IIpPolicyStore, DistributedCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, DistributedCacheRateLimitCounterStore>();
             string con = "Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;";
             services.AddDbContext<DogsContext>(options => options.UseSqlServer(con));
             services.AddControllers(opts=>
                 opts.ModelBinderProviders.Insert(0,new DogModelBinderProvider())
             );
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +57,8 @@ namespace DogTestApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseIpRateLimiting();
 
             app.UseAuthorization();
 

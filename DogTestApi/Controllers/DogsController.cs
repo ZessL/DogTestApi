@@ -10,6 +10,7 @@ using DogTestApi.Misc.Lists;
 using DogTestApi.Misc.Order;
 using DogTestApi.Misc;
 using DogTestApi.Misc.Checks;
+using DogTestApi.Misc.OrderOperations;
 
 namespace DogTestApi.Controllers
 {
@@ -57,12 +58,12 @@ namespace DogTestApi.Controllers
             }
 
             List<Dog> dogList = new List<Dog>();
-            bool isSorted = Order.orderBy(db, order, attribute,out dogList);
-            if (!isSorted)
+            dogList = (from s in db.Dogs select s).ToList();
+            string isSorted = doOrder.orderBy(dogList, order, attribute,out dogList);
+            if (isSorted != null)
             {
-                return BadRequest("ERROR: error while perfroming order");
+                return BadRequest(isSorted);
             }
-
 
             return new ObjectResult(dogList);
         }
@@ -75,14 +76,13 @@ namespace DogTestApi.Controllers
             {
                 return BadRequest(checkFields);
             }
-            var dogs = from d in db.Dogs select d;
-            var dogsList = await dogs.ToListAsync();
-            if (pageLimit * pageNumber >= dogsList.Count)
+            List<Dog> pagedList = new List<Dog>();
+            string isPaged = doPagination.paging(db.Dogs.ToList(), pageNumber, pageLimit, out pagedList);
+            if(isPaged != null)
             {
-                return BadRequest("ERROR: too huge number of pageNumber OR/AND pageLimit");
+                return BadRequest(isPaged);
             }
-            dogsList = dogsList.Skip(pageNumber * pageLimit).Take(pageLimit).ToList();
-            return new ObjectResult(dogsList);
+            return new ObjectResult(pagedList);
         }
 
         [HttpGet("pagedAndSorted")]
@@ -98,7 +98,20 @@ namespace DogTestApi.Controllers
             {
                 return BadRequest(checkAttributeOrder);
             }
-
+            
+            List<Dog> dogList = new List<Dog>();
+            string isSorted = doOrder.orderBy(db.Dogs.ToList(), order, attribute, out dogList);
+            if (isSorted != null)
+            {
+                return BadRequest(isSorted);
+            }
+            List<Dog> outDogList = new List<Dog>();
+            string isPaged = doPagination.paging(dogList, pageNumber, pageLimit, out outDogList);
+            if (isPaged != null)
+            {
+                return BadRequest(isPaged);
+            }
+            return new ObjectResult(outDogList);
 
         }
 
