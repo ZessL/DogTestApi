@@ -1,12 +1,8 @@
-﻿using DogTestApi.Models;
-using Microsoft.AspNetCore.Http;
+﻿using DogTestApi.Misc.Checks;
+using DogTestApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using DogTestApi.Misc.Checks;
 
 namespace DogTestApi.Controllers
 {
@@ -15,10 +11,17 @@ namespace DogTestApi.Controllers
     public class DogController : ControllerBase
     {
         DogsContext db;
+        DbSet<Dog> dbTable;
 
         public DogController(DogsContext context)
         {
             db = context;
+            dbTable = db.Dogs;
+        }
+        public DogController(DogsContext context, bool test)
+        {
+            db = context;
+            dbTable = db.TestDogs;
         }
 
         [HttpPost]
@@ -36,7 +39,7 @@ namespace DogTestApi.Controllers
             }
 
             Dog presenceDog;
-            presenceDog = await db.Dogs.FirstOrDefaultAsync(dogEnt => dogEnt.name == dog.name);
+            presenceDog = await dbTable.FirstOrDefaultAsync(dogEnt => dogEnt.name == dog.name);
             if (presenceDog != null)
             {
                 if (presenceDog.name == dog.name)
@@ -44,10 +47,10 @@ namespace DogTestApi.Controllers
                     return BadRequest("ERROR: Entity with this name already exists");
                 }
             }
-            db.Dogs.Add(dog);
+            dbTable.Add(dog);
             await db.SaveChangesAsync();
             return Ok(dog);
-            
+
         }
     }
 }

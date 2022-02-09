@@ -1,11 +1,8 @@
-﻿using DogTestApi.Models;
+﻿using DogTestApi.Misc.Checks;
+using DogTestApi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using DogTestApi.Misc.Checks;
 
 namespace DogTestApi.Misc.Binders
 {
@@ -31,7 +28,7 @@ namespace DogTestApi.Misc.Binders
                 tail_length = short.Parse(sTailLength);
                 weight = short.Parse(sWeight);
             }
-            catch(FormatException e)
+            catch (FormatException e)
             {
                 bindingContext.Result = ModelBindingResult.Failed();
                 return Task.FromException(new ArgumentException("ERROR: Field tail_length OR weight contains symbols"));
@@ -46,12 +43,12 @@ namespace DogTestApi.Misc.Binders
             };
 
             string checkFiledsError = DogFieldsCheck.FieldsPassOrNot(newDog);
-            if(checkFiledsError != null)
+            if (checkFiledsError != null)
             {
                 bindingContext.Result = ModelBindingResult.Failed();
                 return Task.FromException(new ArgumentException(checkFiledsError));
             }
-               
+
 
             bindingContext.Result = ModelBindingResult.Success(newDog);
             return Task.CompletedTask;

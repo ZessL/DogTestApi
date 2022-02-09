@@ -1,8 +1,6 @@
 ﻿using DogTestApi.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DogTestApi.Misc.Order
 {
@@ -79,5 +77,5 @@ namespace DogTestApi.Misc.Order
             return "ERROR: Sorting style nor desc(descending), nor upsc(upscending)";
         }
     }
-        
+
 }

@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DogTestApi.Models
 {
@@ -17,15 +12,15 @@ namespace DogTestApi.Models
             this.tail_length = tail_length;
             this.weight = weight;
         }
-        
+
         public int Id { get; set; }
-        
+
         [BindRequired]
         public string name { get; set; }
-        
+
         [BindRequired]
         public string color { get; set; }
-        
+
         [BindRequired]
         public short tail_length { get; set; }
 

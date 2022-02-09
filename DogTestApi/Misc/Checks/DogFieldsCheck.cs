@@ -1,9 +1,5 @@
-﻿using DogTestApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DogTestApi.Misc.Dictionaries;
+﻿using DogTestApi.Misc.Dictionaries;
+using DogTestApi.Models;
 
 namespace DogTestApi.Misc.Checks
 {
@@ -15,13 +11,16 @@ namespace DogTestApi.Misc.Checks
             if (dog.name == null)
             {
                 return FieldErrorsDictionary.fieldErrorPairs["name"];
-            } else if(dog.color == null)
+            }
+            else if (dog.color == null)
             {
                 return FieldErrorsDictionary.fieldErrorPairs["color"];
-            } else if(dog.tail_length < 1)
+            }
+            else if (dog.tail_length < 1)
             {
                 return FieldErrorsDictionary.fieldErrorPairs["tail_length"];
-            } else if(dog.weight < 1)
+            }
+            else if (dog.weight < 1)
             {
                 return FieldErrorsDictionary.fieldErrorPairs["weight"];
             }
